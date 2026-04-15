@@ -49,7 +49,7 @@ paths:
         - 1 回のリクエストで取得できる最大件数は 50 件（maxCountItem の上限）です。
         - 本 API のデータ提供元：IPA（独立行政法人 情報処理推進機構）/ JPCERT/CC
 
-        #ExamplePrompts 直近1ヶ月の CVE 脆弱性情報を取得してください
+        #ExamplePrompts 直近1ヶ月の CVE 脆弱性情報を10件取得してください
         #ExamplePrompts 過去1週間に公開された Windows に関する脆弱性を取得してください
         #ExamplePrompts 深刻度が高い（High）脆弱性を過去1ヶ月分取得してください
         #ExamplePrompts Apache の重大な CVE 脆弱性を検索してください
@@ -161,10 +161,11 @@ paths:
           schema:
             type: integer
             minimum: 1
-            maximum: 50
-            default: 50
+            maximum: 10
+            default: 10
           description: >-
-            1 回のリクエストで取得する最大件数（1〜50、デフォルト 50）。
+            1 回のリクエストで取得する最大件数（1〜10、デフォルト 10）。
+            ⚠️ レスポンスサイズ制限のため上限は 10 件です。件数を増やすと結果が返らない場合があります。
         - in: query
           name: lang
           required: false
