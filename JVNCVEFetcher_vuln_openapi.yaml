@@ -36,10 +36,13 @@ paths:
 
         【日付フィルタリング】
         - w=過去1週間、m=過去1ヶ月、n=無制限（全期間）。
-        - 特定の日時以降のデータを取得するには rangeDatePublic=n を指定し、
-          レスポンスの dc:date フィールドで日時フィルタリングを行ってください。
-          エントリは dc:date の降順（新しい順）で返されます。
+        - 「直近1ヶ月」「過去1ヶ月」のリクエストには必ず rangeDatePublic=m を指定してください。
+        - 「直近1週間」「過去1週間」のリクエストには必ず rangeDatePublic=w を指定してください。
+        - 期間絞り込み不要の場合は rangeDatePublic=n を指定してください。
+        - エントリは dc:date の降順（新しい順）で返されます。
         - レスポンスの status:Status の totalRes に総件数が入ります。
+        - ⚠️ 特定の日付（例：2025年1月1日以降）での絞り込みはこの API はサポートしていません。
+          期間コード（w/m/n）のみ使用できます。
 
         【重要】
         - API は認証不要（無償）です。
@@ -50,7 +53,6 @@ paths:
         #ExamplePrompts 過去1週間に公開された Windows に関する脆弱性を取得してください
         #ExamplePrompts 深刻度が高い（High）脆弱性を過去1ヶ月分取得してください
         #ExamplePrompts Apache の重大な CVE 脆弱性を検索してください
-        #ExamplePrompts 2025年1月1日以降に公開された CVE 脆弱性をすべて取得してください
       parameters:
         - in: query
           name: method
