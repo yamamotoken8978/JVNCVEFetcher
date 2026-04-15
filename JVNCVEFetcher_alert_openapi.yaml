@@ -1,0 +1,107 @@
+openapi: 3.0.0
+info:
+  title: MyJVN API - IPA/JPCERT セキュリティ警戒情報
+  description: >-
+    IPA（独立行政法人 情報処理推進機構）および JPCERT/CC が発行するセキュリティ警戒情報・
+    注意喚起情報を取得する MyJVN API です。
+    製品のセキュリティアップデート情報や重要なセキュリティ勧告を一覧取得できます。
+  version: "1.0"
+servers:
+  - url: https://jvndb.jvn.jp
+paths:
+  /myjvn:
+    get:
+      operationId: GetIPASecurityAlerts
+      summary: IPA/JPCERT セキュリティ警戒情報リストを取得する
+      description: |-
+        IPA および JPCERT/CC が発行するセキュリティ警戒情報（注意警戒情報）の
+        一覧を返します。Adobe、Microsoft、Apache、Oracle などの主要製品の
+        セキュリティアップデート情報や緊急勧告が含まれます。
+
+        各エントリには以下が含まれます：
+        - id: 警戒情報 ID（例: MYJVN-ALT-2026-0001）
+        - title: 警戒情報タイトル（製品名と公開日）
+        - published: 公開日時
+        - updated: 更新日時
+        - category: 情報カテゴリ（INFO など）
+        - sec:items: 対象製品のリスト（製品名、CPE 識別子、リリース URL）
+
+        【注意】このスキルは IPA が運営する警戒情報サービスのデータを返します。
+        severity（深刻度）や CVE での絞り込みはできません。
+        脆弱性の CVE 詳細情報が必要な場合は GetJVNDBVulnerabilities スキルを使用してください。
+
+        #ExamplePrompts 最新の IPA セキュリティ警戒情報を取得してください
+        #ExamplePrompts JPCERT/CC が発行した最近のセキュリティ勧告を確認してください
+        #ExamplePrompts 最新のソフトウェアセキュリティアップデート情報を一覧表示してください
+      parameters:
+        - in: query
+          name: method
+          required: true
+          schema:
+            type: string
+            enum:
+              - getAlertList
+            default: getAlertList
+          description: >-
+            API メソッド名。常に "getAlertList" を指定してください。
+        - in: query
+          name: feed
+          required: true
+          schema:
+            type: string
+            enum:
+              - hnd
+            default: hnd
+          description: >-
+            フィードバージョン。常に "hnd" を指定してください。
+        - in: query
+          name: startItem
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: >-
+            取得開始位置（1 始まり）。ページネーション時に使用します。
+            例：2 ページ目を取得するには startItem=51 を指定。
+        - in: query
+          name: maxCountItem
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 50
+          description: >-
+            1 回のリクエストで取得する最大件数（1〜50、デフォルト 50）。
+        - in: query
+          name: lang
+          required: false
+          schema:
+            type: string
+            enum:
+              - ja
+              - en
+            default: ja
+          description: >-
+            レスポンス言語。ja=日本語（デフォルト）、en=英語。
+      responses:
+        "200":
+          description: >-
+            IPA/JPCERT セキュリティ警戒情報リスト（XML/Atom 形式）。
+            各 <entry> 要素に以下のフィールドが含まれます：
+            - id: 警戒情報 ID（例: MYJVN-ALT-2026-0001）
+            - title: 警戒情報タイトル
+            - published: 公開日時 ※日時フィルタリングにはこのフィールドを使用
+            - updated: 更新日時
+            - category/@label: カテゴリラベル
+            - sec:items/sec:item: 対象製品リスト
+              - sec:title: 製品名とバージョン
+              - sec:link/@href: 製品のリリースノート・パッチ URL
+              - sec:cpe: CPE 識別子
+              - sec:published: 製品リリース日
+          content:
+            application/xml:
+              schema:
+                type: string
+                description: Atom 形式の XML レスポンス

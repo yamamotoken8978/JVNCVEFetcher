@@ -1,0 +1,178 @@
+openapi: 3.0.0
+info:
+  title: MyJVN API - JVNDB 脆弱性対策概要情報
+  description: >-
+    JVN iPedia（JVNDB）に登録されている CVE 脆弱性情報を取得する MyJVN API です。
+    IPA と JPCERT/CC が共同運営する脆弱性対策情報データベース JVN iPedia を参照します。
+    発見日・更新日・発行日の期間指定、キーワード検索、CVSS 深刻度によるフィルタリングが可能です。
+    1 リクエストで最大 50 件取得でき、totalRes と startItem によるページネーションに対応しています。
+  version: "1.0"
+servers:
+  - url: https://jvndb.jvn.jp
+paths:
+  /myjvn:
+    get:
+      operationId: GetJVNDBVulnerabilities
+      summary: JVNDB から CVE 脆弱性情報リストを取得する
+      description: |-
+        JVN iPedia（JVNDB）に登録されている CVE 脆弱性情報の概要リストを返します。
+        各エントリには JVNDB ID、タイトル、説明、CVE 番号、参照 URL、CVSS スコア、
+        発見日 (dc:date)、登録日 (dcterms:issued)、更新日 (dcterms:modified) が含まれます。
+
+        【日付フィルタリング】
+        - rangeDatePublic / rangeDatePublished / rangeDateFirstPublished はすべて相対期間指定です。
+          w=過去1週間、m=過去1ヶ月、n=無制限（全期間）。
+        - 特定の日時以降のデータを取得するには rangeDatePublic=n を指定し、
+          returned エントリの dc:date フィールドで日時フィルタリングを行ってください。
+          エントリは dc:date の降順（新しい順）で返されます。
+        - より古い期間のデータには startItem でページネーションを使用してください。
+        - レスポンスの status:Status の totalRes に総件数が入ります。
+
+        【重要】
+        - API は認証不要（無償）です。
+        - 1 回のリクエストで取得できる最大件数は 50 件（maxCountItem の上限）です。
+        - 本 API のデータ提供元：IPA（独立行政法人 情報処理推進機構）/ JPCERT/CC
+
+        #ExamplePrompts 直近1ヶ月の CVE 脆弱性情報を取得してください
+        #ExamplePrompts 過去1週間に公開された Windows に関する脆弱性を取得してください
+        #ExamplePrompts 深刻度が高い（High）脆弱性を過去1ヶ月分取得してください
+        #ExamplePrompts Apache の重大な CVE 脆弱性を検索してください
+        #ExamplePrompts 2025年1月1日以降に公開された CVE 脆弱性をすべて取得してください
+      parameters:
+        - in: query
+          name: method
+          required: true
+          schema:
+            type: string
+            enum:
+              - getVulnOverviewList
+            default: getVulnOverviewList
+          description: >-
+            API メソッド名。常に "getVulnOverviewList" を指定してください。
+        - in: query
+          name: feed
+          required: true
+          schema:
+            type: string
+            enum:
+              - hnd
+            default: hnd
+          description: >-
+            フィードバージョン。常に "hnd" を指定してください。
+        - in: query
+          name: rangeDatePublic
+          required: false
+          schema:
+            type: string
+            enum:
+              - w
+              - m
+              - n
+            default: m
+          description: >-
+            発見日（公表日）の期間フィルタ。
+            w=過去1週間、m=過去1ヶ月（デフォルト）、n=無制限（全期間）。
+            特定日時以降のデータを取得したい場合は n を指定し、
+            レスポンスの dc:date フィールドで絞り込んでください。
+        - in: query
+          name: rangeDatePublished
+          required: false
+          schema:
+            type: string
+            enum:
+              - w
+              - m
+              - n
+            default: n
+          description: >-
+            更新日の期間フィルタ。
+            w=過去1週間、m=過去1ヶ月、n=無制限（デフォルト）。
+        - in: query
+          name: rangeDateFirstPublished
+          required: false
+          schema:
+            type: string
+            enum:
+              - w
+              - m
+              - n
+            default: n
+          description: >-
+            JVN iPedia 登録日（発行日）の期間フィルタ。
+            w=過去1週間、m=過去1ヶ月、n=無制限（デフォルト）。
+        - in: query
+          name: keyword
+          required: false
+          schema:
+            type: string
+          description: >-
+            キーワード検索。製品名（例: Windows, Apache, OpenSSL）、
+            ベンダ名、CVE 番号（例: CVE-2024-）などを指定できます。
+            スペースを含む場合はダブルクォートで囲んでください（例: "Oracle Database"）。
+        - in: query
+          name: severity
+          required: false
+          schema:
+            type: string
+            enum:
+              - c
+              - h
+              - m
+              - l
+              - n
+            default: n
+          description: >-
+            CVSS 深刻度フィルタ（CVSSv3 基準）。
+            c=緊急 (Critical/9.0-10.0)、h=重要 (High/7.0-8.9)、
+            m=警告 (Medium/4.0-6.9)、l=注意 (Low/0.1-3.9)、n=フィルタなし（デフォルト）。
+        - in: query
+          name: startItem
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: >-
+            取得開始位置（1 始まり）。ページネーション時に使用します。
+            例：2 ページ目を取得するには startItem=51 を指定。
+        - in: query
+          name: maxCountItem
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+            default: 50
+          description: >-
+            1 回のリクエストで取得する最大件数（1〜50、デフォルト 50）。
+        - in: query
+          name: lang
+          required: false
+          schema:
+            type: string
+            enum:
+              - ja
+              - en
+            default: ja
+          description: >-
+            レスポンス言語。ja=日本語（デフォルト）、en=英語。
+      responses:
+        "200":
+          description: >-
+            JVNDB 脆弱性情報リスト（XML/RSS 形式）。
+            各 <item> 要素に以下のフィールドが含まれます：
+            - sec:identifier: JVNDB ID（例: JVNDB-2024-001234）
+            - title: 脆弱性タイトル
+            - description: 脆弱性の詳細説明
+            - sec:references source="CVE": CVE 番号と NVD URL
+            - sec:cvss score: CVSS スコア（score 属性）と深刻度（severity 属性）
+            - dc:date: 発見日（公表日）※日時によるフィルタリングにはこのフィールドを使用
+            - dcterms:issued: JVN iPedia 登録日
+            - dcterms:modified: JVN iPedia 最終更新日
+            - link: JVNDB エントリの URL
+            最後の status:Status タグに totalRes（総件数）と totalResRet（取得件数）が含まれます。
+          content:
+            application/xml:
+              schema:
+                type: string
+                description: RDF/RSS 形式の XML レスポンス

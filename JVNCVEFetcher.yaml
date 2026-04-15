@@ -1,0 +1,20 @@
+Descriptor:
+  Name: JVNCVEFetcher
+  DisplayName: JVN CVE Fetcher
+  Description: >-
+    JPCERT/CC および JVN iPedia（JVNDB）から CVE 脆弱性情報を取得するプラグインです。
+    MyJVN API を通じて、JVN iPedia に登録されている脆弱性情報と
+    IPA/JPCERT が発行するセキュリティ警戒情報を検索・取得できます。
+    発見日・更新日・発行日による期間フィルタリング、キーワード検索、
+    CVSS 深刻度によるフィルタリングが可能です。
+  SupportedAuthTypes:
+    - None
+
+SkillGroups:
+  - Format: API
+    Settings:
+      OpenApiSpecUrl: https://<YOUR-HOST>/JVNCVEFetcher_vuln_openapi.yaml
+
+  - Format: API
+    Settings:
+      OpenApiSpecUrl: https://<YOUR-HOST>/JVNCVEFetcher_alert_openapi.yaml
