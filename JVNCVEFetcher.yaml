@@ -19,29 +19,29 @@ SkillGroups:
   # 1. MyJVN API - 注意警戒情報一覧 (IPA/JPCERT 集約)
   - Format: API
     Settings:
-      OpenApiSpecUrl: https://raw.githubusercontent.com/hisashin0728/JVNCVEFetcher/refs/heads/main/JVNCVEFetcher_myjvn_alert_openapi.yaml
+      OpenApiSpecUrl: https://raw.githubusercontent.com/yamamotoken8978/JVNCVEFetcher/refs/heads/main/JVNCVEFetcher_myjvn_alert_openapi.yaml
 
   # 2. JPCERT/CC 注意喚起 RSS (JPCERT 直接フィード)
   - Format: API
     Settings:
-      OpenApiSpecUrl: https://raw.githubusercontent.com/hisashin0728/JVNCVEFetcher/refs/heads/main/JVNCVEFetcher_alert_openapi.yaml
+      OpenApiSpecUrl: https://raw.githubusercontent.com/yamamotoken8978/JVNCVEFetcher/refs/heads/main/JVNCVEFetcher_alert_openapi.yaml
 
   # 3. MyJVN API - ベンダ一覧
   - Format: API
     Settings:
-      OpenApiSpecUrl: https://raw.githubusercontent.com/hisashin0728/JVNCVEFetcher/refs/heads/main/JVNCVEFetcher_vendor_openapi.yaml
+      OpenApiSpecUrl: https://raw.githubusercontent.com/yamamotoken8978/JVNCVEFetcher/refs/heads/main/JVNCVEFetcher_vendor_openapi.yaml
 
   # 4. MyJVN API - 脆弱性対策概要情報一覧
   - Format: API
     Settings:
-      OpenApiSpecUrl: https://raw.githubusercontent.com/hisashin0728/JVNCVEFetcher/refs/heads/main/JVNCVEFetcher_vuln_openapi.yaml
+      OpenApiSpecUrl: https://raw.githubusercontent.com/yamamotoken8978/JVNCVEFetcher/refs/heads/main/JVNCVEFetcher_vuln_openapi.yaml
 
   # 5. MyJVN API - 脆弱性対策詳細情報
   - Format: API
     Settings:
-      OpenApiSpecUrl: https://raw.githubusercontent.com/hisashin0728/JVNCVEFetcher/refs/heads/main/JVNCVEFetcher_detail_openapi.yaml
+      OpenApiSpecUrl: https://raw.githubusercontent.com/yamamotoken8978/JVNCVEFetcher/refs/heads/main/JVNCVEFetcher_detail_openapi.yaml
 
   # 6. MyJVN API - 統計データ (CVSSv3 統計情報)
   - Format: API
     Settings:
-      OpenApiSpecUrl: https://raw.githubusercontent.com/hisashin0728/JVNCVEFetcher/refs/heads/main/JVNCVEFetcher_stats_openapi.yaml
+      OpenApiSpecUrl: https://raw.githubusercontent.com/yamamotoken8978/JVNCVEFetcher/refs/heads/main/JVNCVEFetcher_stats_openapi.yaml
